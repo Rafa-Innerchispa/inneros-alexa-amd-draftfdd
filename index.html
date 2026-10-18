@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AMD Hackathon · Status · InnerOS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --amd-red: #ed1c24;
+        --amd-red-dim: #b9151c;
+        --bg: #0c0d10;
+        --surface: #14161c;
+        --surface-2: #1c1f28;
+        --border: #2a2f3a;
+        --text: #eef0f4;
+        --muted: #8b93a7;
+        --ok: #3dd68c;
+        --warn: #f5a623;
+        --active: #5b9cff;
+        --planned: #6b7280;
+        --radius: 12px;
+        --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "IBM Plex Sans", system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.45;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(ellipse 80% 50% at 50% -20%, rgba(237, 28, 36, 0.18), transparent),
+          radial-gradient(ellipse 60% 40% at 100% 100%, rgba(91, 156, 255, 0.08), transparent);
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .page {
+        position: relative;
+        z-index: 1;
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 1.75rem 1.25rem 2.5rem;
+      }
+
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.75rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .logo {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--amd-red), var(--amd-red-dim));
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        font-size: 0.7rem;
+        letter-spacing: 0.04em;
+        box-shadow: var(--shadow);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(1.25rem, 3vw, 1.65rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .subtitle {
+        margin: 0.2rem 0 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: center;
+        justify-content: flex-end;
+      }
+
+      .pill {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.72rem;
+        padding: 0.35rem 0.65rem;
+        border-radius: 999px;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        color: var(--muted);
+      }
+
+      .pill strong {
+        color: var(--text);
+        font-weight: 500;
+      }
+
+      .pill.live {
+        border-color: rgba(61, 214, 140, 0.35);
+        color: var(--ok);
+      }
+
+      .grid {
+        display: grid;
+        gap: 1rem;
+      }
+
+      @media (min-width: 768px) {
+        .grid.hero {
+          grid-template-columns: 280px 1fr;
+        }
+        .grid.main {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.15rem 1.25rem;
+        box-shadow: var(--shadow);
+      }
+
+      .card h2 {
+        margin: 0 0 0.85rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+      }
+
+      .overall-ring {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.75rem;
+      }
+
+      .ring-wrap {
+        position: relative;
+        width: 140px;
+        height: 140px;
+      }
+
+      .ring-wrap svg {
+        transform: rotate(-90deg);
+      }
+
+      .ring-bg {
+        fill: none;
+        stroke: var(--surface-2);
+        stroke-width: 10;
+      }
+
+      .ring-fg {
+        fill: none;
+        stroke: var(--amd-red);
+        stroke-width: 10;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 0.6s ease;
+      }
+
+      .ring-label {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        font-size: 2rem;
+        font-weight: 700;
+      }
+
+      .phase {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--amd-red);
+      }
+
+      .streams {
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+      }
+
+      .stream {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .stream:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+
+      .stream-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 0.5rem;
+        margin-bottom: 0.35rem;
+      }
+
+      .stream-name {
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+
+      .stream-owner {
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+
+      .bar {
+        height: 6px;
+        background: var(--surface-2);
+        border-radius: 999px;
+        overflow: hidden;
+        margin: 0.4rem 0;
+      }
+
+      .bar > span {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, var(--amd-red-dim), var(--amd-red));
+        border-radius: 999px;
+        transition: width 0.6s ease;
+      }
+
+      .stream-note {
+        font-size: 0.82rem;
+        color: var(--muted);
+        margin: 0;
+      }
+
+      .status {
+        font-size: 0.68rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: 0.2rem 0.45rem;
+        border-radius: 4px;
+      }
+
+      .status.done {
+        background: rgba(61, 214, 140, 0.15);
+        color: var(--ok);
+      }
+      .status.in_progress {
+        background: rgba(91, 156, 255, 0.15);
+        color: var(--active);
+      }
+      .status.planned {
+        background: rgba(107, 114, 128, 0.2);
+        color: var(--planned);
+      }
+
+      .timeline {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .timeline li {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 0.65rem;
+        align-items: center;
+        padding: 0.55rem 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.9rem;
+      }
+
+      .timeline li:last-child {
+        border-bottom: none;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--planned);
+      }
+
+      .dot.done {
+        background: var(--ok);
+        box-shadow: 0 0 0 3px rgba(61, 214, 140, 0.25);
+      }
+      .dot.active {
+        background: var(--active);
+        box-shadow: 0 0 0 3px rgba(91, 156, 255, 0.25);
+      }
+      .dot.planned {
+        background: var(--border);
+      }
+
+      .tl-date {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.72rem;
+        color: var(--muted);
+      }
+
+      .infra-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 0;
+        font-size: 0.88rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .infra-row:last-child {
+        border-bottom: none;
+      }
+
+      .infra-state {
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .infra-state.ok {
+        color: var(--ok);
+      }
+      .infra-state.planned {
+        color: var(--planned);
+      }
+      .infra-state.unknown {
+        color: var(--warn);
+      }
+
+      .infra-detail {
+        font-size: 0.78rem;
+        color: var(--muted);
+        text-align: right;
+        max-width: 55%;
+      }
+
+      .blockers {
+        margin: 0;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        background: rgba(61, 214, 140, 0.08);
+        border: 1px solid rgba(61, 214, 140, 0.2);
+        color: var(--ok);
+        font-size: 0.9rem;
+      }
+
+      .blockers.has-items {
+        background: rgba(237, 28, 36, 0.08);
+        border-color: rgba(237, 28, 36, 0.25);
+        color: #ff8a8f;
+      }
+
+      footer {
+        margin-top: 1.5rem;
+        text-align: center;
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+
+      .err-banner {
+        display: none;
+        margin-bottom: 1rem;
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius);
+        background: rgba(245, 166, 35, 0.12);
+        border: 1px solid rgba(245, 166, 35, 0.35);
+        color: var(--warn);
+        font-size: 0.88rem;
+      }
+
+      .err-banner.visible {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div id="err" class="err-banner" role="status"></div>
+
+      <header>
+        <div>
+          <div class="brand">
+            <div class="logo" aria-hidden="true">AMD</div>
+            <div>
+              <h1 id="title">Hackathon · Status</h1>
+              <p class="subtitle" id="tagline">—</p>
+            </div>
+          </div>
+        </div>
+        <div class="meta">
+          <span class="pill live" id="live-pill">● LIVE</span>
+          <span class="pill"><strong>ops</strong> <span id="ops-id">—</span></span>
+          <span class="pill"><strong>draft</strong> <span id="draft-id">—</span></span>
+          <span class="pill" id="updated-at">—</span>
+        </div>
+      </header>
+
+      <div class="grid hero">
+        <section class="card overall-ring" aria-labelledby="overall-heading">
+          <h2 id="overall-heading">Progreso global</h2>
+          <div class="ring-wrap">
+            <svg width="140" height="140" viewBox="0 0 140 140" aria-hidden="true">
+              <circle class="ring-bg" cx="70" cy="70" r="58" />
+              <circle
+                class="ring-fg"
+                id="ring-fg"
+                cx="70"
+                cy="70"
+                r="58"
+                stroke-dasharray="364.4"
+                stroke-dashoffset="364.4"
+              />
+            </svg>
+            <div class="ring-label"><span id="overall-pct">—</span>%</div>
+          </div>
+          <p class="phase" id="phase">—</p>
+          <p class="stream-note" id="project-name">—</p>
+        </section>
+
+        <section class="card" aria-labelledby="streams-heading">
+          <h2 id="streams-heading">Workstreams</h2>
+          <div class="streams" id="streams"></div>
+        </section>
+      </div>
+
+      <div class="grid main" style="margin-top: 1rem">
+        <section class="card" aria-labelledby="milestones-heading">
+          <h2 id="milestones-heading">Hitos</h2>
+          <ul class="timeline" id="milestones"></ul>
+        </section>
+
+        <section class="card" aria-labelledby="infra-heading">
+          <h2 id="infra-heading">Infra &amp; entorno</h2>
+          <div id="infra"></div>
+          <h2 style="margin-top: 1.25rem" id="blockers-heading">Blockers</h2>
+          <p class="blockers" id="blockers">—</p>
+        </section>
+      </div>
+
+      <footer>
+        InnerOS · Alexa → AMD demo · Actualiza <code>status.json</code> y recarga
+      </footer>
+    </div>
+
+    <script>
+      const CIRC = 2 * Math.PI * 58;
+
+      function fmtDate(iso) {
+        if (!iso) return "—";
+        try {
+          return new Intl.DateTimeFormat("es-ES", {
+            dateStyle: "medium",
+            timeStyle: "short",
+          }).format(new Date(iso));
+        } catch {
+          return iso;
+        }
+      }
+
+      function statusLabel(s) {
+        const map = {
+          done: "Hecho",
+          in_progress: "En curso",
+          planned: "Planificado",
+        };
+        return map[s] || s;
+      }
+
+      function render(data) {
+        document.getElementById("title").textContent = "AMD Hackathon · Status";
+        document.getElementById("tagline").textContent = data.tagline || "";
+        document.getElementById("ops-id").textContent = data.opsTask || "—";
+        document.getElementById("draft-id").textContent = data.draft || "—";
+        document.getElementById("updated-at").textContent = "↻ " + fmtDate(data.updatedAt);
+        document.getElementById("overall-pct").textContent = data.overallPercent ?? 0;
+        document.getElementById("phase").textContent = "Fase · " + (data.phase || "—");
+        document.getElementById("project-name").textContent = data.project || "";
+
+        const ring = document.getElementById("ring-fg");
+        const pct = Math.min(100, Math.max(0, Number(data.overallPercent) || 0));
+        ring.setAttribute("stroke-dashoffset", String(CIRC * (1 - pct / 100)));
+
+        const streamsEl = document.getElementById("streams");
+        streamsEl.innerHTML = (data.streams || [])
+          .map(
+            (s) => `
+          <article class="stream">
+            <div class="stream-head">
+              <div>
+                <div class="stream-name">${escapeHtml(s.name)}</div>
+                <div class="stream-owner">${escapeHtml(s.owner || "")}</div>
+              </div>
+              <span class="status ${escapeHtml(s.status)}">${statusLabel(s.status)} · ${s.percent ?? 0}%</span>
+            </div>
+            <div class="bar" role="progressbar" aria-valuenow="${s.percent}" aria-valuemin="0" aria-valuemax="100">
+              <span style="width:${s.percent ?? 0}%"></span>
+            </div>
+            <p class="stream-note">${escapeHtml(s.note || "")}</p>
+          </article>`
+          )
+          .join("");
+
+        const msEl = document.getElementById("milestones");
+        msEl.innerHTML = (data.milestones || [])
+          .map(
+            (m) => `
+          <li>
+            <span class="dot ${escapeHtml(m.state)}"></span>
+            <span>${escapeHtml(m.label)}</span>
+            <span class="tl-date">${m.date ? escapeHtml(m.date) : "—"}</span>
+          </li>`
+          )
+          .join("");
+
+        const infraEl = document.getElementById("infra");
+        infraEl.innerHTML = (data.infra || [])
+          .map(
+            (i) => `
+          <div class="infra-row">
+            <div>
+              <div>${escapeHtml(i.label)}</div>
+            </div>
+            <div class="infra-detail">
+              <span class="infra-state ${escapeHtml(i.state)}">${escapeHtml(i.state)}</span>
+              · ${escapeHtml(i.detail || "")}
+            </div>
+          </div>`
+          )
+          .join("");
+
+        const blockers = data.blockers || [];
+        const bEl = document.getElementById("blockers");
+        if (blockers.length === 0) {
+          bEl.textContent = "Sin blockers registrados.";
+          bEl.classList.remove("has-items");
+        } else {
+          bEl.textContent = blockers.join(" · ");
+          bEl.classList.add("has-items");
+        }
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      async function load() {
+        const err = document.getElementById("err");
+        try {
+          const res = await fetch("status.json?" + Date.now(), { cache: "no-store" });
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          const data = await res.json();
+          render(data);
+          err.classList.remove("visible");
+        } catch (e) {
+          err.textContent =
+            "No se pudo cargar status.json (sirve la carpeta con un HTTP server, p. ej. python3 -m http.server 8080).";
+          err.classList.add("visible");
+        }
+      }
+
+      load();
+      setInterval(load, 30000);
+    </script>
+  </body>
+</html>
