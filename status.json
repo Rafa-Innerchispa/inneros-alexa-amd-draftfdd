@@ -1,0 +1,56 @@
+{
+  "updatedAt": "2026-10-18T01:32:00Z",
+  "opsTask": "ops_6422b787b51a",
+  "draft": "draft-fdd43a5fc3a7",
+  "project": "InnerOS Alexa → AMD demo",
+  "tagline": "Pedido por voz (Ambient Guardian / Inner Oz)",
+  "overallPercent": 42,
+  "phase": "Build",
+  "streams": [
+    {
+      "id": "voice",
+      "name": "Voz · Alexa / Ambient Guardian",
+      "owner": "Inner Oz",
+      "percent": 55,
+      "status": "in_progress",
+      "note": "Intent capturado; skill en borrador"
+    },
+    {
+      "id": "amd",
+      "name": "Inferencia AMD · ROCm / vLLM",
+      "owner": "Qwen3-Coder",
+      "percent": 35,
+      "status": "in_progress",
+      "note": "Stack ROCm objetivo; smoke test pendiente"
+    },
+    {
+      "id": "orchestration",
+      "name": "Orquestación InnerOS",
+      "owner": "Agentes",
+      "percent": 60,
+      "status": "in_progress",
+      "note": "Ops task activa en worktree"
+    },
+    {
+      "id": "dashboard",
+      "name": "Dashboard hackathon (1 página)",
+      "owner": "Cursor ops",
+      "percent": 100,
+      "status": "done",
+      "note": "Esta vista — estado en vivo vía status.json"
+    }
+  ],
+  "milestones": [
+    { "label": "Seed README (Alexa voice)", "state": "done", "date": "2026-10-18" },
+    { "label": "Dashboard 1 página", "state": "done", "date": "2026-10-18" },
+    { "label": "Pipeline voz → agente", "state": "active", "date": null },
+    { "label": "Inferencia local en GPU AMD", "state": "planned", "date": null },
+    { "label": "Demo end-to-end", "state": "planned", "date": null }
+  ],
+  "infra": [
+    { "label": "ROCm driver", "state": "unknown", "detail": "Verificar en nodo GPU" },
+    { "label": "vLLM", "state": "planned", "detail": "Qwen3-Coder" },
+    { "label": "Worktree ops", "state": "ok", "detail": "cursor__ops-6422b787b51a" }
+  ],
+  "blockers": []
+}
